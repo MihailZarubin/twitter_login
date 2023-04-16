@@ -30,8 +30,23 @@ class MainHandler:
         self.driver = driver
 
     def login(self):
-        self.driver.get('https://twitter.com/login')
+        self.driver.get('https://twitter.com/')
+        # .DraftEditor-editorContainer span[data-text="true"]
+        # time.sleep(120)  # TODO: remove
         twitter = Twitter(self.driver)
+
+        time.sleep(5)
+
+        login_field_element = twitter.type_tweet()
+        login_field_element.send_keys('Hello World 2!')
+
+        time.sleep(1)
+
+        buttons = twitter.click_button()
+
+        buttons[2].click()
+
+        time.sleep(120)
 
         # login input
         login_field_element = twitter.find_login_field()

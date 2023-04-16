@@ -38,6 +38,21 @@ class Twitter:
         else:
             return None
 
+    def type_tweet(self):
+        elements = self.wait_for_elements(By.CSS_SELECTOR, "div[role='textbox']")
+        if isinstance(elements, list):
+            for element in elements:
+                return element
+        else:
+            return None
+
+    def click_button(self):
+        elements = self.wait_for_elements(By.XPATH, "//*[contains(text(), 'Tweet')]/ancestor::*[3]")
+        if isinstance(elements, list):
+            return elements
+        else:
+            return None
+
     def wait_for_elements(self, by, selector):
 
         # wait max ~30 sec for element to appear
