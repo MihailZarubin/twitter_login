@@ -11,24 +11,32 @@ class Twitter:
         if isinstance(elements, list):
             for element in elements:
                 return element
+        else:
+            return None
 
     def find_password_field(self):
         elements = self.wait_for_elements(By.XPATH, "//input[@autocomplete='current-password']")
         if isinstance(elements, list):
             for element in elements:
                 return element
+        else:
+            return None
 
     def find_continue_button(self):
         elements = self.wait_for_elements(By.XPATH, "//*[contains(text(), 'Далее')]/ancestor::*[3]")
         if isinstance(elements, list):
             for element in elements:
                 return element
+        else:
+            return None
 
     def find_enter_button(self):
         elements = self.wait_for_elements(By.XPATH, "//*[contains(text(), 'Войти')]/ancestor::*[3]")
         if isinstance(elements, list):
             for element in elements:
                 return element
+        else:
+            return None
 
     def wait_for_elements(self, by, selector):
 

@@ -31,32 +31,32 @@ class MainHandler:
 
     def login(self):
         self.driver.get('https://twitter.com/login')
-        # time.sleep(10)  # wait for the page to load
         twitter = Twitter(self.driver)
 
-        # fill email
+        # login input
         login_field_element = twitter.find_login_field()
-        login_field_element.send_keys(self.user['email'])
+        if login_field_element:
+            time.sleep(1)  # TODO: remove
+            login_field_element.send_keys(self.user['email'])  # fill email
 
-        time.sleep(1)  # TODO: remove
+            # continue button
+            continue_button_element = twitter.find_continue_button()  # click continue button
+            if continue_button_element:
+                time.sleep(1)  # TODO: remove
+                continue_button_element.click()
 
-        # click continue button
-        continue_button_element = twitter.find_continue_button()
-        continue_button_element.click()
+                # password input
+                password_field = twitter.find_password_field()
+                if password_field:
+                    time.sleep(1)  # TODO: remove
+                    password_field.send_keys(self.user['password'])  # fill password
 
-        time.sleep(1)  # TODO: remove
-
-        # fill password
-        password_field = twitter.find_password_field()
-        password_field.send_keys(self.user['password'])
-
-        time.sleep(1)  # TODO: remove
-
-        # click enter button
-        enter_button_element = twitter.find_enter_button()
-        enter_button_element.click()
-
-        time.sleep(5)  # TODO: remove
+                    # enter button
+                    enter_button_element = twitter.find_enter_button()
+                    if enter_button_element:
+                        time.sleep(1)  # TODO: remove
+                        enter_button_element.click() # click enter button
+                        time.sleep(5)  # TODO: remove
 
     def clear_browser_cache(self):
         tabs_count = 1
