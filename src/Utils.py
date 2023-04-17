@@ -3,6 +3,7 @@ import json
 
 
 class Utils:
+
     @staticmethod
     def get_settings_from_json():
         with open('../settings.json') as f:

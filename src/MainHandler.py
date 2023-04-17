@@ -1,19 +1,28 @@
 import undetected_chromedriver
+import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-import time
 from Twitter import Twitter
 from Utils import Utils
+from OpenAIService import OpenAIService
 
 
 class MainHandler:
-    def __init__(self, user):
-        self.user = user
+
+    def __init__(self):
+        self.user = None
         self.driver = None
+        self.twitter = Twitter()
+        self.settings = Utils.get_settings_from_json()
+        self.open_ai_service = OpenAIService()
+
+    def set_user(self, user):
+        self.user = user
+        self.open_ai_service.set_user(user)  # TODO: not good
 
     def init_browser(self):
-        chrome_bin_path = Utils.get_settings_from_json()['chrome_bin_path']  # TODO: change
-        chrome_user_dir = Utils.get_settings_from_json()['chrome_user_dir']  # TODO: change
+        chrome_bin_path = self.settings['chrome_bin_path']
+        chrome_user_dir = self.settings['chrome_user_dir_prefix'] + 'User Data Twitter ' + str(self.user['id'])
 
         options = undetected_chromedriver.ChromeOptions()
         options.binary_location = chrome_bin_path
@@ -28,50 +37,56 @@ class MainHandler:
 
         driver = undetected_chromedriver.Chrome(options=options)
         self.driver = driver
+        self.twitter.set_driver(driver)
 
     def login(self):
-        self.driver.get('https://twitter.com/')
-        # .DraftEditor-editorContainer span[data-text="true"]
-        # time.sleep(120)  # TODO: remove
-        twitter = Twitter(self.driver)
-
-        time.sleep(5)
-
-        login_field_element = twitter.type_tweet()
-        login_field_element.send_keys('Hello World 2!')
-
-        time.sleep(1)
-
-        buttons = twitter.click_button()
-
-        buttons[2].click()
-
-        time.sleep(120)
+        self.driver.get(self.twitter.login_page_url)
 
         # login input
-        login_field_element = twitter.find_login_field()
+        login_field_element = self.twitter.find_login_field()
         if login_field_element:
-            time.sleep(1)  # TODO: remove
             login_field_element.send_keys(self.user['email'])  # fill email
 
             # continue button
-            continue_button_element = twitter.find_continue_button()  # click continue button
+            continue_button_element = self.twitter.find_continue_button()  # click continue button
             if continue_button_element:
-                time.sleep(1)  # TODO: remove
                 continue_button_element.click()
 
                 # password input
-                password_field = twitter.find_password_field()
+                password_field = self.twitter.find_password_field()
                 if password_field:
-                    time.sleep(1)  # TODO: remove
                     password_field.send_keys(self.user['password'])  # fill password
 
                     # enter button
-                    enter_button_element = twitter.find_enter_button()
+                    enter_button_element = self.twitter.find_enter_button()
                     if enter_button_element:
-                        time.sleep(1)  # TODO: remove
                         enter_button_element.click() # click enter button
-                        time.sleep(5)  # TODO: remove
+
+    def create_twit(self, text):
+        if self.driver.current_url != self.twitter.home_page_url:
+            self.driver.get(self.twitter.home_page_url)
+
+        self.twitter.type_twit(text)
+        self.twitter.submit_twit()
+
+    def create_twit_ai(self, prompt):
+        if self.driver.current_url != self.twitter.home_page_url:
+            self.driver.get(self.twitter.home_page_url)
+
+        text = self.open_ai_service.generate_twit_text(prompt)
+        self.twitter.type_twit(text)
+        self.twitter.submit_twit()
+
+    def check_log_in(self):
+        if self.driver.current_url != self.twitter.home_page_url:
+            self.driver.get(self.twitter.home_page_url)
+
+        res = self.twitter.check_twit_input()
+        if not res:
+            print('>>> User with id: ' + str(self.user['id']) + ' is not logged in. Skipping it.')
+        else:
+            print('>>> User with id: ' + str(self.user['id']) + ' user is successfully logged in.')
+        return res
 
     def clear_browser_cache(self):
         tabs_count = 1
@@ -80,9 +95,9 @@ class MainHandler:
 
         for i in range(tabs_count):
             actions.send_keys(Keys.TAB).perform()
-            time.sleep(1)  # TODO: make less
+            time.sleep(0.5)
         actions.send_keys(Keys.ENTER).perform()
-        time.sleep(1)  # TODO: make less
+        time.sleep(1)
 
     def close_browser(self):
         self.driver.quit()

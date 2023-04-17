@@ -1,18 +1,20 @@
+import time
 from UsersRepository import UsersRepository
 from MainHandler import MainHandler
-import time
 
 
 users = UsersRepository.get_all_users()
+main_handler = MainHandler()
 
 for user in users:
-    main_handler = MainHandler(user)
+    main_handler.set_user(user)
     main_handler.init_browser()
-    # main_handler.clear_browser_cache()  # TODO: enable
-    try:
-        main_handler.login()
-        time.sleep(30)  # TODO: remove
-    except Exception as e:
-        print(str(e))
-        break
+    if not main_handler.check_log_in():
+        main_handler.close_browser()
+        continue
+    else:
+        # main_handler.create_twit('Hello world!')
+        prompt = 'Write a tweet like you are Elon Musk promoting the new cryptocurrency called Doge Coin.'
+        main_handler.create_twit_ai(prompt)
+        time.sleep(5)
     main_handler.close_browser()
