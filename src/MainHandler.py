@@ -1,6 +1,7 @@
 import undetected_chromedriver
 import time
 import hashlib
+import sys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -23,8 +24,11 @@ class MainHandler:
         self.open_ai_service.set_user(user)  # TODO: not good
 
     def init_browser(self):
+        user_id = sys.argv[1]
+        # user_id = str(self.user['id'])
+
         chrome_bin_path = self.settings['chrome_bin_path']
-        chrome_user_dir = self.settings['chrome_user_dir_prefix'] + 'User Data Twitter ' + str(self.user['id'])
+        chrome_user_dir = self.settings['chrome_user_dir_prefix'] + 'UserDataTwitter' + user_id
 
         options = undetected_chromedriver.ChromeOptions()
         options.binary_location = chrome_bin_path
@@ -99,6 +103,8 @@ class MainHandler:
             actions = ActionChains(self.driver)
             likes_elements = self.twitter.get_likes_on_page()
 
+            stop_cycling = False
+
             if likes_elements:
                 for like_element in likes_elements:
 
@@ -125,7 +131,11 @@ class MainHandler:
                         self.driver.execute_script("arguments[0].remove()", like_element)
                         current_likes_count = current_likes_count + 1
                     except:
-                        continue
+                        stop_cycling = True
+                        break
+
+                if stop_cycling:
+                    break
 
             if current_likes_count >= max_likes_count:
                 break
