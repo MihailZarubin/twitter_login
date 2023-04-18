@@ -14,7 +14,7 @@ for user in users:
         main_handler.close_browser()
         continue
     else:
-        # main_handler.create_twit('Hello world!')
+        # main_handler.create_twit('Test Test Test!')
         # prompt = 'Write a tweet like you are Elon Musk promoting the new cryptocurrency called Doge Coin.'
         # main_handler.create_twit_ai(prompt)
         # time.sleep(5)
