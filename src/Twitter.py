@@ -6,6 +6,7 @@ class Twitter:
 
     def __init__(self):
         self.driver = None
+        self.domain_url = 'https://twitter.com/'
         self.home_page_url = 'https://twitter.com/home'
         self.login_page_url = 'https://twitter.com/login'
 
@@ -69,6 +70,20 @@ class Twitter:
         elements = self.wait_for_elements(By.XPATH, "//*[contains(text(), 'Tweet')]/ancestor::*[3]")
         if isinstance(elements, list):
             elements[2].click()
+
+    def get_twits_on_page(self):
+        elements = self.wait_for_elements(By.CSS_SELECTOR, "article[data-testid='tweet']")
+        if isinstance(elements, list):
+            return elements
+        else:
+            return None
+
+    def get_likes_on_page(self):
+        elements = self.wait_for_elements(By.CSS_SELECTOR, "article[data-testid='tweet'] div[aria-label*='Likes.']")
+        if isinstance(elements, list):
+            return elements
+        else:
+            return None
 
     def wait_for_elements(self, by, selector, repeat=90):
 

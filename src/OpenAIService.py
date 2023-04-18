@@ -17,14 +17,18 @@ class OpenAIService:
         return self.get_response(prompt)
 
     def get_response(self, prompt, role='user'):
-        openai.api_key = self.api_key
-        completion = openai.ChatCompletion.create(
-            model=self.model, messages=[
-                {
-                    "role": role,
-                    "content": prompt
-                }
-            ]
-        )
-        res = completion.choices[0].message.content.encode('ascii', 'ignore').decode('utf-8')
-        return re.sub(r'#\w+', '', res)
+        try:
+            openai.api_key = self.api_key
+            completion = openai.ChatCompletion.create(
+                model=self.model, messages=[
+                    {
+                        "role": role,
+                        "content": prompt
+                    }
+                ]
+            )
+            res = completion.choices[0].message.content.encode('ascii', 'ignore').decode('utf-8')
+            return re.sub(r'#\w+', '', res)
+        except Exception as e:
+            print(f"Произошла ошибка: {e}")
+            return None
