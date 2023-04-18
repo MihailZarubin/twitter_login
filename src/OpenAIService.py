@@ -31,4 +31,4 @@ class OpenAIService:
             return re.sub(r'#\w+', '', res)
         except Exception as e:
             print(f"Произошла ошибка: {e}")
-            return None
+            raise e
