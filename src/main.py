@@ -1,4 +1,5 @@
 import time
+import sys
 from UsersRepository import UsersRepository
 from MainHandler import MainHandler
 
@@ -17,5 +18,14 @@ for user in users:
         # prompt = 'Write a tweet like you are Elon Musk promoting the new cryptocurrency called Doge Coin.'
         # main_handler.create_twit_ai(prompt)
         # time.sleep(5)
-        main_handler.like_user_twits('dogecoin', 5, 'Whether the tweet is positive?')
+
+        # channel_name = 'dogecoin'
+        channel_name = sys.argv[2]
+
+        # With ChatGTP filtering the tweets mood
+        # main_handler.like_user_twits(channel_name, 5, 'Whether the tweet is positive?')
+
+        # Simple liking from top to down
+        main_handler.like_user_twits(channel_name, 50)
+
     main_handler.close_browser()
