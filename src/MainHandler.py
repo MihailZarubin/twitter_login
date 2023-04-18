@@ -39,7 +39,7 @@ class MainHandler:
         chrome_options.add_argument(f"--user-agent={Utils.get_random_user_agent()}")
 
         driver = webdriver.Remote(
-            command_executor=f'http://localhost:786/wd/hub',
+            command_executor=f'http://localhost:4444/wd/hub',
             desired_capabilities=chrome_options.to_capabilities()
         )
         self.driver = driver
