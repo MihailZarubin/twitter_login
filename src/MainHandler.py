@@ -1,6 +1,8 @@
-import undetected_chromedriver
 import time
 import hashlib
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -26,18 +28,20 @@ class MainHandler:
         chrome_bin_path = self.settings['chrome_bin_path']
         chrome_user_dir = self.settings['chrome_user_dir_prefix'] + 'User Data Twitter ' + str(self.user['id'])
 
-        options = undetected_chromedriver.ChromeOptions()
-        options.binary_location = chrome_bin_path
-        options.add_argument('--user-data-dir=' + chrome_user_dir)
+        chrome_options = ChromeOptions()
+        chrome_options.binary_location = chrome_bin_path
+        chrome_options.add_argument('--user-data-dir=' + chrome_user_dir)
+        chrome_options.add_argument('--disable-gpu')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument(f"--window-size={Utils.get_random_width()},{Utils.get_random_height()}")
+        chrome_options.add_argument(f"--user-agent={Utils.get_random_user_agent()}")
 
-        options.add_argument('--disable-gpu')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-blink-features=AutomationControlled')
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument(f"--window-size={Utils.get_random_width()},{Utils.get_random_height()}")
-        options.add_argument(f"--user-agent={Utils.get_random_user_agent()}")
-
-        driver = undetected_chromedriver.Chrome(options=options)
+        driver = webdriver.Remote(
+            command_executor=f'http://localhost:786/wd/hub',
+            desired_capabilities=chrome_options.to_capabilities()
+        )
         self.driver = driver
         self.twitter.set_driver(driver)
 
